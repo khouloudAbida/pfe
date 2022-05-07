@@ -1,0 +1,321 @@
+﻿@model EmployeeApplication.Models.Employee
+
+@{
+    ViewData["Title"] = "Create";
+}
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>RH</title>
+    <!-- Favicon-->
+    <link rel="icon" href="../../assets/images/favicon.ico" type="image/x-icon">
+    <!-- Plugins Core Css -->
+    <link href="../../assets/css/app.min.css" rel="stylesheet">
+    <link href="../../assets/css/form.min.css" rel="stylesheet">
+    <!-- Custom Css -->
+    <link href="../../assets/css/style.css" rel="stylesheet" />
+    <!-- You can choose a theme from css/styles instead of get all themes -->
+    <link href="../../assets/css/styles/all-themes.css" rel="stylesheet" />
+</head>
+@*<h2>
+    <strong> Formulaire Employee </strong>
+</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Cin" class="control-label"></label>
+                <input asp-for="Cin" class="form-control" placeholder="Cin" />
+                <span asp-validation-for="Cin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Nom" class="control-label"></label>
+                <input asp-for="Nom" class="form-control" placeholder="Nom" />
+                <span asp-validation-for="Nom" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Prenom" class="control-label"></label>
+                <input asp-for="Prenom" class="form-control" placeholder="Prenom" />
+                <span asp-validation-for="Prenom" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateNaissance" class="control-label"></label>
+                <input asp-for="DateNaissance" class="form-control" placeholder="DateNaissance" />
+                <span asp-validation-for="DateNaissance" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" placeholder="Email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Telephone" class="control-label"></label>
+                <input asp-for="Telephone" class="form-control" placeholder="Telephone" />
+                <span asp-validation-for="Telephone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Adresse" class="control-label"></label>
+                <input asp-for="Adresse" class="form-control" placeholder="Adresse" />
+                <span asp-validation-for="Adresse" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Sexe" class="control-label"></label>
+                <select asp-for="Sexe"  asp-validation-for="Sexe" class="form-control">
+                    <option value="">Femme</option>
+                    <option value="Undergraduate">Homme</option>
+
+                </select>
+
+      
+            </div>
+            <div class="form-group">
+                <label asp-for="DateEmbauché" class="control-label"></label>
+                <input asp-for="DateEmbauché" class="form-control" placeholder="DateEmbauché" />
+                <span asp-validation-for="DateEmbauché" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SoldeCongé" class="control-label"></label>
+                <input asp-for="SoldeCongé" class="form-control" placeholder="SoldeCongé" />
+                <span asp-validation-for="SoldeCongé" class="text-danger"></span>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <input type="submit" value="Ajouter" class="btn btn-primary btn-block" />
+                </div>
+                <div class="form-group col-md-6">
+                    <a asp-action="Index" class="btn btn-secondary btn-block"><i class="fa fa-table"></i> Back to List </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>*@
+<body class="light">
+    <!-- Page Loader -->
+    <div class="page-loader-wrapper">
+        <div class="loader">
+            <div class="m-t-30">
+                <img class="loading-img-spin" src="../../assets/images/loading.png" alt="admin">
+            </div>
+            <p>S'il vous plaît, Attendez...</p>
+        </div>
+    </div>
+    <!-- #END# Page Loader -->
+    <!-- Overlay For Sidebars -->
+    <div class="overlay"></div>
+    <!-- #END# Overlay For Sidebars -->
+    <!-- Top Bar -->
+    
+    <section class="content">
+        <div class="container-fluid">
+            <div class="block-header">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <ul class="breadcrumb breadcrumb-style ">
+                            <li class="breadcrumb-item">
+                                <h4 class="page-title">Employees</h4>
+                            </li>
+                            <li class="breadcrumb-item bcrumb-1">
+                                <a href="../../index.html">
+                                    <i class="fas fa-home"></i> Home
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item bcrumb-2">
+                                <a href="#" onClick="return false;">Employees</a>
+                            </li>
+                            <li class="breadcrumb-item active">Ajouter Employee</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="card">
+                        <div class="header">
+                            <h2>
+                                <strong>Ajouter</strong> Employee
+                            </h2>
+                            <ul class="header-dropdown m-r--5">
+                                <li class="dropdown">
+                                    <a href="javascript:void(0);" class="dropdown-toggle" data-bs-toggle="dropdown"
+                                       role="button" aria-haspopup="true" aria-expanded="false">
+                                        <i class="material-icons">more_vert</i>
+                                    </a>
+                                    <ul class="dropdown-menu float-end">
+                                        <li>
+                                            <a href="javascript:void(0);">Action</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);">Une autre action</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);">Something else here</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="body">
+                            @if (@ViewBag.Error != null)
+                            {
+                                <div class="alert alert-danger" role="alert">
+                                    @ViewBag.Error
+                                </div>
+                            }
+                            <form asp-controller="Employee" asp-action="Create">
+                                <div class="row clearfix">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <div class="form-line">
+
+                                                <input type="number" class="form-control" asp-for="Cin"
+                                                       placeholder="Cin" />
+                                                <span asp-validation-for="Cin" class="text-danger"></span>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <div class="form-line">
+                                                <input type="text" class="form-control" asp-for="Nom"
+                                                       placeholder="Nom" />
+                                                <span asp-validation-for="Nom" class="text-danger"></span>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row clearfix">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <div class="form-line">
+                                                <input id="email" type="text" class="validate form-control"
+                                                       asp-for="Prenom" placeholder="Prenom">
+                                                <span asp-validation-for="Prenom" class="text-danger"></span>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <input type="number" class="form-control datetimepicker" asp-for="Telephone"
+                                                   placeholder="Telephone">
+                                            <span asp-validation-for="Telephone" class="text-danger"></span>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row clearfix">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <div class="form-line">
+                                                <input type="text" class="form-control" asp-for="Adresse"
+                                                       placeholder="Adresse" />
+                                                <span asp-validation-for="Adresse" class="text-danger"></span>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <div class="form-line">
+                                                <input type="text" class="form-control" asp-for="Email"
+                                                       placeholder="Email" />
+                                                <span asp-validation-for="Email" class="text-danger"></span>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row clearfix">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <div class="form-line">
+                                                <input type="date" class="form-control datetimepicker" asp-for="DateNaissance"
+                                                       placeholder="Date De Naissance" />
+                                                <span asp-validation-for="DateNaissance" class="text-danger"></span>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <input type="date" class="form-control datetimepicker" asp-for="DateEmbauché"
+                                                   placeholder="Date Emboche">
+                                            <span asp-validation-for="DateEmbauché" class="text-danger"></span>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row clearfix">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <div class="form-line">
+                                                <input asp-for="SoldeCongé" class="form-control no-resize"
+                                                       placeholder="Solde Conge">
+                                                <span asp-validation-for="SoldeCongé" class="text-danger"></span>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <select asp-for="Sexe" class="col-sm-6 ">
+                                                <option value="Homme">Homme</option>
+                                                <option value="Femme">Femme</option>
+                                            </select>
+                                            @*<div >
+                            <input type="radio" value="Male" id="Gender1" name="Gender" />Male
+                            <input type="radio" value="Female" id="Gender2" name="Gender" />Female
+
+                            <span asp-validation-for="Sexe" class="text-danger"></span>
+
+                        </div>*@
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12 p-t-20 text-center">
+                                    <input type="submit" value="Save" class="btn btn-primary waves-effect m-r-15" />
+                                </div>
+
+                            </form>
+                            <div class="col-lg-12 p-t-20 text-center">
+
+                                <button type="button" class="btn btn-danger waves-effect">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="../../assets/js/app.min.js"></script>
+    <script src="../../assets/js/form.min.js"></script>
+    <!-- Custom Js -->
+    <script src="../../assets/js/admin.js"></script>
+    <script src="../../assets/js/pages/forms/form-data.js"></script>
+</body>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");
+
+
+        <script src="~/assets/js/app.min.js"></script>
+
+        <script src="~/assets/js/chart.min.js"></script>
+        <!-- Custom Js -->
+        <script src="~/assets/js/admin.js"></script>
+
+        <script src="~/assets/js/bundles/apexcharts/apexcharts.min.js"></script>
+        <script src="~/assets/js/pages/index.js"></script>
+        <script src="~/assets/js/pages/todo/todo.js"></script>
+    }
+}

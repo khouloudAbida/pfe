@@ -1,0 +1,117 @@
+﻿@model IEnumerable<EmployeeApplication.Models.Conge>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="block-header">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <ul class="breadcrumb breadcrumb-style ">
+                        <li class="breadcrumb-item">
+                            <h4 class="page-title">All Leave Request</h4>
+                        </li>
+                        <li class="breadcrumb-item bcrumb-1">
+                            <a href="../../index.html">
+                                <i class="fas fa-home"></i> Home
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item bcrumb-2">
+                            <a href="#" onClick="return false;">Leave</a>
+                        </li>
+                        <li class="breadcrumb-item active">All Leave Request</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="card">
+                    <div class="header">
+                        <h2>
+                            <strong>All</strong> Leave Request
+                        </h2>
+                        <ul class="header-dropdown m-r--5">
+                            <li class="dropdown">
+                                <a href="#" onClick="return false;" class="dropdown-toggle"
+                                   data-bs-toggle="dropdown" role="button" aria-haspopup="true"
+                                   aria-expanded="false">
+                                    <i class="material-icons">more_vert</i>
+                                </a>
+                                <ul class="dropdown-menu float-end">
+                                    <li>
+                                        <a href="#" onClick="return false;">Action</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" onClick="return false;">Another action</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" onClick="return false;">Something else here</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="body">
+                        <div class="table-responsive">
+                            <table class="table table-hover js-basic-example contact_list">
+                                <thead>
+                                    <tr>
+                                        <th class="center"> Nom Employee </th>
+                                        <th class="center"> Prenom Employee </th>
+
+                                        <th class="center"> Date Début </th>
+                                        <th class="center"> Date Fin  </th>
+                                        <th class="center"> Notes </th>
+                                        <th class="center"> Type </th>
+                                        <th class="center"> Status </th>
+
+                                        <th class="center"> Action </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (Conge c in Model)
+                                    {
+                                    <tr class="odd gradeX">
+
+                                        <td class="center">@c.Employee.Nom</td>
+                                        <td class="center">@c.Employee.Prenom</td>
+
+                                        <td class="center">@c.DU</td>
+                                        <td class="center">@c.AU</td>
+                                        <td class="center">@c.Notes</td>
+                                        <td class="center">@c.TypeConge.Type</td>
+                                        <td class="center">
+                                            @if (c.status == -1)
+                                            {<div class="badge alert-warning">Attend</div>
+                                            }
+                                            @if (c.status == 0)
+                                            {<div class="badge alert-danger">Réfusé</div>
+                                            }
+                                            @if (c.status == 1)
+                                            {<div class="badge alert-success">Accepter</div>
+                                            }
+                                        </td>
+                                        <td class="center">
+                                            <a asp-action="SetStatus" asp-route-CongeID="@c.ID" asp-route-status="1" class="btn btn-tbl-edit">
+                                                <i class="material-icons">done</i>
+                                            </a>
+                                            <a asp-action="SetStatus" asp-route-CongeID="@c.ID" asp-route-status="0" class="btn btn-tbl-edit">
+                                                <i class="material-icons">close</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
