@@ -46,3 +46,15 @@ D:\App_PFE\EmployeeApplication\obj\Debug\netcoreapp2.1\Razor\Views\Conges\Detail
 D:\App_PFE\EmployeeApplication\obj\Debug\netcoreapp2.1\Razor\Views\Conges\Edit.cshtml.g.cs
 D:\App_PFE\EmployeeApplication\obj\Debug\netcoreapp2.1\Razor\Views\Conges\Index.cshtml.g.cs
 D:\App_PFE\EmployeeApplication\obj\Debug\netcoreapp2.1\Razor\Views\RhConges\Index.cshtml.g.cs
+D:\App_PFE\EmployeeApplication\obj\Debug\netcoreapp2.1\Razor\Views\Conges\Calendar.cshtml.g.cs
+D:\App_PFE\EmployeeApplication\obj\Debug\netcoreapp2.1\Razor\Views\JoursFeries\Create.cshtml.g.cs
+D:\App_PFE\EmployeeApplication\obj\Debug\netcoreapp2.1\Razor\Views\JoursFeries\Delete.cshtml.g.cs
+D:\App_PFE\EmployeeApplication\obj\Debug\netcoreapp2.1\Razor\Views\JoursFeries\Details.cshtml.g.cs
+D:\App_PFE\EmployeeApplication\obj\Debug\netcoreapp2.1\Razor\Views\JoursFeries\Edit.cshtml.g.cs
+D:\App_PFE\EmployeeApplication\obj\Debug\netcoreapp2.1\Razor\Views\JoursFeries\Index.cshtml.g.cs
+D:\App_PFE\EmployeeApplication\obj\Debug\netcoreapp2.1\Razor\Views\Contrats\Create.cshtml.g.cs
+D:\App_PFE\EmployeeApplication\obj\Debug\netcoreapp2.1\Razor\Views\Contrats\Delete.cshtml.g.cs
+D:\App_PFE\EmployeeApplication\obj\Debug\netcoreapp2.1\Razor\Views\Contrats\Details.cshtml.g.cs
+D:\App_PFE\EmployeeApplication\obj\Debug\netcoreapp2.1\Razor\Views\Contrats\Edit.cshtml.g.cs
+D:\App_PFE\EmployeeApplication\obj\Debug\netcoreapp2.1\Razor\Views\Contrats\Index.cshtml.g.cs
+D:\App_PFE\EmployeeApplication\obj\Debug\netcoreapp2.1\Razor\Views\Conges\RhCalander.cshtml.g.cs

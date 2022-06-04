@@ -16,7 +16,6 @@ namespace EmployeeApplication.Models
         {
 
         }
-
         public DbSet<Employee> Employees { get; set; }
 
         public DbSet<User> Users { get; set; }
@@ -24,5 +23,13 @@ namespace EmployeeApplication.Models
         public DbSet<Conge> Conges { get; set; }
 
         public DbSet<TypeConge> TypeConges { get; set; }
+
+        public DbSet<JoursFerie> joursFeries { get; set; }
+        public DbSet<Contrat> Contrats { get; set; }
+
+
+        public DbSet<FichePaie> FichePaies { get; set; }
+
+
     }
 }

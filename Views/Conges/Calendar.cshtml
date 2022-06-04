@@ -1,0 +1,333 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+@if (@ViewBag.Error != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.Error
+    </div>
+}
+<div id="calender" style="margin-top: 10%"></div>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><span id="eventTitle"></span></h4>
+            </div>
+            <div class="modal-body">
+                <button id="btnDelete" class="btn btn-default btn-sm pull-right">
+                    <span class="glyphicon glyphicon-remove"></span> Supprimer
+                </button>
+                <button id="btnEdit" class="btn btn-default btn-sm pull-right" style="margin-right:5px;">
+                    <span class="glyphicon glyphicon-pencil"></span> Modifier
+                </button>
+                <p id="pDetails"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModalSave" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"> Demande de congé</h4>
+            </div>
+            <div class="modal-body">
+                <form class="col-md-12 form-horizontal">
+                    <input type="hidden" id="hdEventID" value="0" />
+
+                  
+                        <label>Date de Début</label>
+                        <div class="input-group date" id="dtp1">
+                            <input type="text" id="txtStart" class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                   
+
+
+                    <label> Date de Fin</label>
+                    <div class="input-group date" id="dtp2">
+                        <input type="text" id="txtEnd" class="form-control" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label>Justification</label>
+                        <textarea id="txtDescription" rows="3" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <select id="type" asp-items="ViewBag.Types" class="col-12 form-control">
+
+                            <option value="">Choisir un type</option>
+                        </select>
+                    </div>
+
+                    <button type="button" id="btnSave" class="btn btn-success">Enregistrer</button>
+                    <button type="button" id="btnClose" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var events = [];
+            var selectedEvent = null;
+            FetchEventAndRenderCalendar();
+            function FetchEventAndRenderCalendar() {
+                events = [];
+                $.ajax({
+                    type: "GET",
+                    url: "/Conges/GetEvents",
+                    success: function (data) {
+                        $.each(data.data, function (i, v) {
+
+                            events.push({
+                                eventID: v.id,
+                                title: v.employee.nom,
+                                description: v.employeeID,
+                                start: moment(v.du),
+                                end: v.au != null ? moment(v.au) : null,
+                                color: v.status == -1 ? "blue" : (v.status == 1 ? "green" : "red"),
+                                extendedProps: {
+                                    type: v.typeCongeID,
+                                    note:v.note
+                                }
+
+                            });
+                        })
+
+                        GenerateCalender(events);
+                    },
+                    error: function (error) {
+                        alert('failed');
+                    }
+                })
+            }
+
+            function GenerateCalender(events) {
+                $('#calender').fullCalendar('destroy');
+                $('#calender').fullCalendar({
+                   
+                    defaultDate: new Date(),
+                    timeFormat: 'h(:mm)a',
+                    hiddenDays: [6, 0],
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,agendaDay'
+                    },
+                    eventColor: '#378006',
+                    events: events,
+                    eventResize: function (info) {
+                        alert(info.event.title + " end is now " + info.event.end.toISOString());
+
+                        if (!confirm("is this okay?")) {
+                            info.revert();
+                        }
+                    },
+                    dragScroll: true,
+                    eventDurationEditable: true,
+                    selectable: true,
+                    eventResizableFromStart: true,
+                    eventClick: function (calEvent, jsEvent, view) {
+                        selectedEvent = calEvent;
+                        $('#myModal #eventTitle').text(calEvent.title);
+                        var $description = $('<div/>');
+                        $description.append($('<p/>').html('<b>Start:</b>' + calEvent.start.format("DD-MMM-YYYY HH:mm a")));
+                        if (calEvent.end != null) {
+                            $description.append($('<p/>').html('<b>End:</b>' + calEvent.end.format("DD-MMM-YYYY HH:mm a")));
+                        }
+                        $description.append($('<p/>').html('<b>Description:</b>' + calEvent.description));
+                        $('#myModal #pDetails').empty().html($description);
+
+                        $('#myModal').modal();
+                    },
+                    selectable: true,
+                    select: function (start, end) {
+
+                        selectedEvent = {
+                            eventID: 0,
+                            title: '',
+                            description: '',
+                            start: start,
+                            end: end,
+                            allDay: false,
+                            color: ''
+                        };
+                        if (start >= new Date() && new Date(start).getDay() != 0 && new Date(start).getDay() != 6 && moment(new Date(end)).add(-3, 'h').toDate().getDay() != 0 && moment(new Date(end)).add(-3, 'h').toDate().getDay() != 6) {
+                            openAddEditForm();
+                            $('#calendar').fullCalendar('unselect');
+                        }
+                    },
+                    editable: true,
+                    eventDrop: function (event) {
+                        var data = {
+                            ID: event.eventID,
+                            Subject: event.title,
+                            DU: event.start.format('DD/MM/YYYY HH:mm A'),
+                            AU: event.end != null ? event.end.format('DD/MM/YYYY HH:mm A') : null,
+                            Notes: event.extendedProps.note,
+                            typeCongeID: event.extendedProps.type
+                        };
+                       
+                       
+                       
+                        UpdateEvent(data);
+                    }
+                })
+                $('#calender').fullCalendar('option', 'locale', 'fr');
+            }
+
+            $('#btnEdit').click(function () {
+                //Open modal dialog for edit event
+                openAddEditForm();
+            })
+            $('#btnDelete').click(function () {
+                if (selectedEvent != null && confirm('Are you sure?')) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/home/DeleteEvent',
+                        data: { 'eventID': selectedEvent.eventID },
+                        success: function (data) {
+
+                            $('#myModal').modal('hide');
+                            //Refresh the calender
+                            FetchEventAndRenderCalendar();
+
+
+                        },
+                        error: function () {
+                            alert('Failed');
+                        }
+                    })
+                }
+            })
+
+            $('#dtp1,#dtp2').datetimepicker({
+                format: 'DD/MM/YYYY HH:mm:ss'
+            });
+
+            $('#chkIsFullDay').change(function () {
+                if ($(this).is(':checked')) {
+                    $('#divEndDate').hide();
+                }
+                else {
+                    $('#divEndDate').show();
+                }
+            });
+
+            function openAddEditForm() {
+                if (selectedEvent != null) {
+                    $('#hdEventID').val(selectedEvent.eventID);
+                    $('#txtSubject').val(selectedEvent.title);
+                    $('#txtStart').val(selectedEvent.start.format('DD/MM/YYYY HH:mm:ss'));
+                    //$('#txtStart').datetimepicker({
+                    //    // dateFormat: 'dd-mm-yy',
+                    //    format: 'DD/MM/YYYY HH:mm:ss',
+                    //    minDate: selectedEvent.start
+                    //});
+                    $('#chkIsFullDay').prop("checked", selectedEvent.allDay || false);
+                    $('#chkIsFullDay').change();
+                    $('#txtEnd').val(selectedEvent.end != null ? selectedEvent.end.add(-1, 'm').format('DD/MM/YYYY HH:mm A') : '');
+                    $('#txtDescription').val(selectedEvent.description);
+                    $('#ddThemeColor').val(selectedEvent.color);
+                }
+                $('#myModal').modal('hide');
+                $('#myModalSave').modal('show');
+            }
+
+            $('#btnSave').click(function () {
+                //Validation/
+
+                if ($('#txtStart').val().trim() == "") {
+                    alert('Start date required');
+                    return;
+                }
+
+
+                var startDate = moment($('#txtStart').val(), "DD/MM/YYYY HH:mm A").toDate();
+                var endDate = moment($('#txtEnd').val(), "DD/MM/YYYY HH:mm A").add(-1, 'm').toDate();
+                if (startDate > endDate) {
+                    alert('Invalid end date');
+                    return;
+                }
+
+
+                var data = {
+
+                    DU: $('#txtStart').val().trim(),
+                    AU: $('#txtEnd').val().trim(),
+                    Notes: $('#txtDescription').val(),
+                    TypeCongeID: $('#type').val()
+
+                }
+                SaveEvent(data);
+                // call function for submit data to the server
+            })
+            $('#btnClose').click(function () {
+                $('#myModalSave').modal('hide');
+
+            })
+            function SaveEvent(data) {
+                $.ajax({
+                    type: "POST",
+                    url: '/conges/Create',
+                    data: data,
+                    success: function (data) {
+
+                        //Refresh the calender
+                        FetchEventAndRenderCalendar();
+                        $('#myModalSave').modal('hide');
+
+                    },
+                    error: function () {
+                        alert('Failed');
+                    }
+                })
+            }
+            function UpdateEvent(data) {
+                $.ajax({
+                    type: "POST",
+                    url: '/conges/Update',
+                    data: data,
+                    success: function (data) {
+                         var data = {
+
+                    DU: $('#txtStart').val().trim(),
+                    AU: $('#txtEnd').val().trim(),
+                    Notes: $('#txtDescription').val(),
+                    TypeCongeID: $('#type').val()
+
+                }
+                        //Refresh the calender
+                        FetchEventAndRenderCalendar();
+                        $('#myModalSave').modal('hide');
+
+                    },
+                    error: function () {
+                        alert('Failed');
+                    }
+                })
+            }
+
+        })
+    </script>
+}

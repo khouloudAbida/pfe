@@ -7,19 +7,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeApplication.Models;
 using EmployeeApplication.Securirty;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 
 namespace EmployeeApplication.Controllers
 {
     public class EmployeeController : Controller
     {
         private readonly Models.AppDbContext _context;
-
+        private readonly IWebHostEnvironment hostingEnvironment;
         private readonly IAuthentificationService _AuthService;
 
-        public EmployeeController(Models.AppDbContext context, IAuthentificationService AuthService)
+        public EmployeeController(Models.AppDbContext context, IAuthentificationService AuthService,IWebHostEnvironment env)
         {
             _context = context;
             _AuthService = AuthService;
+            hostingEnvironment = env;
         }
 
         // GET: Employee
@@ -49,6 +53,8 @@ namespace EmployeeApplication.Controllers
         // GET: Employee/Create
         public IActionResult Create()
         {
+            List<Contrat> contrats = _context.Contrats.ToList();
+            ViewBag.Contracts = contrats;
             return View();
         }
 
@@ -57,11 +63,32 @@ namespace EmployeeApplication.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdEmployee,Cin,Nom,Prenom,DateNaissance,Email,Telephone,Adresse,Sexe,DateEmbauché,SoldeCongé")] Employee employee)
+        public async Task<IActionResult> Create( Employee employee)
         {
-            
+            string uniqueFileName =null;
+            //////////////////////////////////////
+            ///////////////////////////////////////
             if (ModelState.IsValid)
             {
+                if (employee.ImageFile != null)
+                {
+                    // The image must be uploaded to the images folder in wwwroot
+                    // To get the path of the wwwroot folder we are using the inject
+                    // HostingEnvironment service provided by ASP.NET Core
+
+                    string uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "images");
+
+                    // To make sure the file name is unique we are appending a new
+                    // GUID value and an underscore to the file name
+
+                    uniqueFileName = Guid.NewGuid().ToString() + "_" + employee.ImageFile.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    // Use CopyTo() method provided by IFormFile interface to
+                    // copy the file to wwwroot/images folder
+
+                    employee.ImageFile.CopyTo(new FileStream(filePath, FileMode.Create));
+                }
                 Employee employee1 = _context.Employees.Where(e => e.Cin == employee.Cin).FirstOrDefault();
                     if(employee1 != null)
                     {
@@ -85,7 +112,7 @@ namespace EmployeeApplication.Controllers
                     ViewBag.Error = "Age doit etre supperieur ou egale a 18 ans";
                     return View(employee);
                 }
-                
+                employee.Image = uniqueFileName;
                 await _context.SaveChangesAsync();
                 try {
                 User user = await _AuthService.SignUpEmployee(employee);
@@ -124,17 +151,30 @@ namespace EmployeeApplication.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
        // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdEmployee,Cin,Nom,Prenom,DateNaissance,Email,Telephone,Adresse,Sexe,DateEmbauché,SoldeCongé")] Employee employee)
+        public async Task<IActionResult> Edit(int id, Employee employee)
         {
-            if (id != employee.IdEmployee)
-            {
-                return NotFound();
-            }
+            //if (id != employee.IdEmployee)
+            //{
+            //    return NotFound();
+            //}
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    Employee e = _context.Employees.Find(employee.IdEmployee);
+                    if (employee.ImageFile != null)
+                    {
+                        // If a new photo is uploaded, the existing photo must be
+                        // deleted. So check if there is an existing photo and delete
+
+                        // Save the new photo in wwwroot/images folder and update
+                        // PhotoPath property of the employee object which will be
+                        // eventually saved in the database
+                        employee.Image = ProcessUploadedFile(employee);
+                        HttpContext.Session.SetString("Image", employee.Image);
+
+                    }
                     Employee employee1 = _context.Employees.Where(e => e.Cin == employee.Cin && e.IdEmployee != employee.IdEmployee).FirstOrDefault();
                     if (employee1 != null)
                     {
@@ -150,15 +190,16 @@ namespace EmployeeApplication.Controllers
                     employee1 = _context.Employees.Where(e => e.Telephone == employee.Telephone && e.IdEmployee != employee.IdEmployee).FirstOrDefault();
                     if (employee1 != null)
                     {
-                        ViewBag.Error = "Telephone Existe";
+                        ViewBag.Error = "Téléphone Existe";
                         return View(employee);
                     }
                     if ((DateTime.Now - employee.DateNaissance).Days < 6570)
                     {
-                        ViewBag.Error = "Age doit etre supperieur ou egale a 18 ans";
+                        ViewBag.Error = "Age doit être supérieur ou égale à 18 ans";
                         return View(employee);
                     }
-
+                    employee.UserID = e.UserID;
+                    _context.Entry<Employee>(e).State = EntityState.Detached;
                     _context.Employees.Update(employee);
                     await _context.SaveChangesAsync();
                 }
@@ -201,6 +242,31 @@ namespace EmployeeApplication.Controllers
         private bool EmployeeExists(int id)
         {
             return _context.Employees.Any(e => e.IdEmployee == id);
+        }
+        private string ProcessUploadedFile(Employee employee)
+        {
+            string uniqueFileName = null;
+
+            if (employee.ImageFile != null)
+            {
+                string uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "images");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + employee.ImageFile.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    employee.ImageFile.CopyTo(fileStream);
+                }
+            }
+
+            return uniqueFileName;
+        }
+        [HttpPost]
+
+        public async Task<IActionResult> EditPassword(Employee employee)
+        {
+            Employee e = _context.Employees.Find(employee.IdEmployee);
+           await  _AuthService.EditPassword(e.UserID, employee.NewPassword);
+            return Ok();
         }
     }
 }

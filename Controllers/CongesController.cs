@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeApplication.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using EmployeeApplication.Securirty;
 
 namespace EmployeeApplication.Controllers
 {
@@ -14,19 +16,21 @@ namespace EmployeeApplication.Controllers
     {
         private readonly AppDbContext _context;
 
+
         public CongesController(AppDbContext context)
         {
             _context = context;
         }
 
         // GET: Conges
+       /// [EmployeeAuth]
         public async Task<IActionResult> Index()
         {
             int employeID = int.Parse(HttpContext.Session.GetString("EmployeeID"));
             var appDbContext = _context.Conges.Where(c=>c.EmployeeID == employeID).Include(c => c.Employee).Include(c=>c.TypeConge);
             return View(await appDbContext.ToListAsync());
         }
-
+        //[EmployeeAuth]
         // GET: Conges/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -47,6 +51,7 @@ namespace EmployeeApplication.Controllers
         }
 
         // GET: Conges/Create
+        [EmployeeAuth]
         public IActionResult Create()
         {
             List<TypeConge> conges = _context.TypeConges.ToList();
@@ -58,28 +63,58 @@ namespace EmployeeApplication.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,DU,AU,Notes,EmployeeID,TypeCongeID")] Conge conge)
+        // [ValidateAntiForgeryToken]
+        [EmployeeAuth]
+        public async Task<IActionResult> Create( Conge conge)
         {
+            
 
             if (ModelState.IsValid)
             {
+                JoursFerie[] joursFeries = _context.joursFeries.Where((j) => (( j.Day <= conge.DU.Day && (j.Day + j.NbJours) >= conge.DU.Day) || (j.Day <= conge.AU.Day && (j.Day + j.NbJours) >= conge.AU.Day)) &&j.Month == conge.DU.Month && j.Annee == conge.DU.Year).ToArray();
+                if(joursFeries.Length>0)
+                {
+                    ViewBag.Error = "La date Debut doit être supérieure ou égale à la date du jour.";
+                    return View();
+                }
                 List<TypeConge> conges = _context.TypeConges.ToList();
                 ViewBag.Types = new SelectList(conges, "ID", "Type");
                 if (conge.DU<DateTime.Now)
                 {
-                    ViewBag.Error = "Date Début doits etre supperieur ou egale au date du Jour.";
+                    ViewBag.Error =" La date fin doit être supérieure ou égale à la date du jour.";
                     return View();
                 }
                 if(conge.DU> conge.AU)
                 {
-                    ViewBag.Error = "Date Fin doit etre supperieur au date début. ";
+                    ViewBag.Error = "Date Fin doit être supérieure au date début. ";
                     return View();
                 }
+                //relation
                 conge.EmployeeID = int.Parse(HttpContext.Session.GetString("EmployeeID"));
                 conge.status = -1;
+                double nbHeure=0;
+                if(conge.DU.ToString("yyyy-MM-dd").Equals(conge.AU.ToString("yyyy-MM-dd")) )
+                {
+                    nbHeure += (conge.AU - conge.DU).TotalHours;
+                    if (nbHeure > 8)
+                        nbHeure = 8;
+                }
+                else
+                {
+                    nbHeure +=(conge.DU - new DateTime(conge.DU.Year, conge.DU.Month, conge.DU.Day, 8, 00, 0)).TotalHours;
+
+                    nbHeure += (((conge.AU.Date.AddDays(-1) - conge.DU.Date.AddDays(1)).TotalDays+1) *8);
+                    nbHeure +=  (conge.AU - new DateTime(conge.AU.Year, conge.AU.Month, conge.AU.Day, 8, 00, 0)).TotalHours;
+                }
+                conge.NbHours = (int)nbHeure;
                 _context.Add(conge);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }catch(Exception ex)
+                {
+
+                }
                 return RedirectToAction(nameof(Index));
             }
             ViewData["EmployeeID"] = new SelectList(_context.Employees, "IdEmployee", "Adresse", conge.EmployeeID);
@@ -124,12 +159,12 @@ namespace EmployeeApplication.Controllers
                 {
                     if (conge.DU < DateTime.Now)
                     {
-                        ViewBag.Error = "Date Début doits etre supperieur ou egale au date du Jour.";
+                        ViewBag.Error = "Date Debut doit être supérieure ou égale au date du Jour.";
                         return View();
                     }
                     if (conge.DU > conge.AU)
                     {
-                        ViewBag.Error = "Date Fin doit etre supperieur au date début. ";
+                        ViewBag.Error = "Date Fin doit être supérieure au date début.  ";
                         return View();
                     }
                     conge.EmployeeID = int.Parse(HttpContext.Session.GetString("EmployeeID"));
@@ -152,6 +187,57 @@ namespace EmployeeApplication.Controllers
             }
             ViewData["EmployeeID"] = new SelectList(_context.Employees, "IdEmployee", "Adresse", conge.EmployeeID);
             return View(conge);
+        }
+
+
+
+        public async Task<IActionResult> Update( Conge conge)
+        {
+            
+
+            if (ModelState.IsValid)
+            {
+                 JoursFerie[] joursFeries = _context.joursFeries.Where((j) => ((j.Day <= conge.DU.Day && (j.Day + j.NbJours) >= conge.DU.Day) || (j.Day <= conge.AU.Day && (j.Day + j.NbJours) >= conge.AU.Day)) && j.Month == conge.DU.Month && j.Annee == conge.DU.Year).ToArray();
+                if (joursFeries.Length > 0)
+                {
+                    ViewBag.Error = "Début ou Fin du congée est un jours férier";
+                    return View();
+                }
+                List<TypeConge> conges = _context.TypeConges.ToList();
+                ViewBag.Types = new SelectList(conges, "ID", "Type");
+                if (conge.DU < DateTime.Now)
+                {
+                    ViewBag.Error = "Date Debut doit être supérieure ou égale au date du Jour.";
+                    return View();
+                }
+                if (conge.DU > conge.AU)
+                {
+                    ViewBag.Error = "Date Fin doit être supérieure au date début.";
+                    return View();
+                }
+                conge.EmployeeID = int.Parse(HttpContext.Session.GetString("EmployeeID"));
+                conge.status = -1;
+                double nbHeure = 0;
+                if (conge.DU.ToString("yyyy-MM-dd").Equals(conge.AU.ToString("yyyy-MM-dd")))
+                {
+                    nbHeure += (conge.AU - conge.DU).TotalHours;
+                    if (nbHeure > 8)
+                        nbHeure = 8;
+                }
+                else
+                {
+                    nbHeure += 8 - (conge.DU - new DateTime(conge.DU.Year, conge.DU.Month, conge.DU.Day, 8, 00, 0)).TotalHours;
+
+                    nbHeure += (((conge.AU.Date.AddDays(-1) - conge.DU.Date.AddDays(1)).TotalDays + 1) * 8);
+                    nbHeure += 8 - (conge.AU - new DateTime(conge.AU.Year, conge.AU.Month, conge.AU.Day, 8, 00, 0)).TotalHours;
+                }
+                conge.NbHours = (int)nbHeure; _context.Update(conge);
+                    await _context.SaveChangesAsync();
+                }
+                
+              
+            ViewData["EmployeeID"] = new SelectList(_context.Employees, "IdEmployee", "Adresse", conge.EmployeeID);
+            return View("Calendar");
         }
 
         // GET: Conges/Delete/5
@@ -188,5 +274,36 @@ namespace EmployeeApplication.Controllers
         {
             return _context.Conges.Any(e => e.ID == id);
         }
+
+        public ActionResult Calendar()
+        {
+            List<TypeConge> conges = _context.TypeConges.ToList();
+            ViewBag.Types = new SelectList(conges, "ID", "Type");
+            return View();
+        }
+        public ActionResult RhCalander()
+        {
+            return View();
+        }
+
+        public System.Web.Mvc.JsonResult GetEvents()
+        {
+
+            List<Conge> events = _context.Conges.Include(c => c.Employee).Include(c => c.TypeConge).ToList();
+                return new System.Web.Mvc.JsonResult { Data = events, JsonRequestBehavior = System.Web.Mvc.JsonRequestBehavior.AllowGet };
+            
+        }
+
+        [HttpPost]
+        public string ChangeStatus(Conge conge)
+        {
+            Conge c = _context.Conges.Find(conge.ID);
+            c.status = conge.status;
+            _context.Conges.Update(c);
+            _context.SaveChanges();
+            return "ok";
+        }
+
+
     }
 }

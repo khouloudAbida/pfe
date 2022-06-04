@@ -1,0 +1,42 @@
+﻿@model EmployeeApplication.Models.JoursFerie
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>JoursFerie</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Month)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Month)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Day)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Day)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.NbJours)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NbJours)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Annee)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Annee)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

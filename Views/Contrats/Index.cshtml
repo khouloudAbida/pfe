@@ -1,0 +1,99 @@
+﻿@model IEnumerable<EmployeeApplication.Models.Contrat>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<section class="content">
+    <div class="container-fluid">
+        <div class="block-header">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <ul class="breadcrumb breadcrumb-style ">
+                        <li class="breadcrumb-item">
+                            <h4 class="page-title">liste des Contrats </h4>
+                        </li>
+
+                        <li class="breadcrumb-item bcrumb-2">
+                            <a href="#" onClick="return false;">Gestions des contrats </a>
+                        </li>
+                        <li class="breadcrumb-item active">liste des Contrats</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="card">
+                    <div class="header">
+                        <h2>
+                            <strong>Tous les Contrats </strong>
+                        </h2>
+                    </div>
+                    <div class="body">
+                        <div class="table-responsive">
+                            <table class="table table-hover js-basic-example contact_list">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.type)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.SalaireBrut)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.SalaireNet)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.PrimeDeMois)
+                                            </th>
+                                            
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                        <tr class="odd gradeX">
+
+                                            <td class="center">
+                                                @Html.DisplayFor(modelItem => item.type)
+                                            </td>
+                                            <td class="center">
+                                                @Html.DisplayFor(modelItem => item.SalaireBrut)
+                                            </td>
+                                            <td class="center">
+                                                @Html.DisplayFor(modelItem => item.SalaireNet)
+                                            </td>
+                                            <td class="center">
+                                                @Html.DisplayFor(modelItem => item.PrimeDeMois)
+                                            </td>
+                                            <td class="center">
+                                                <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-tbl-edit">
+                                                    <i class="material-icons">create</i>
+                                                </a>
+                                                @*<a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |*@
+
+                                                <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-tbl-delete">
+                                                    <i class="material-icons">delete_forever</i>
+                                                </a>
+                                            </td>
+                                        </tr>
+
+                                        }
+                                    </tbody>
+                                </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

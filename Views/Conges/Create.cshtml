@@ -10,17 +10,13 @@
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <ul class="breadcrumb breadcrumb-style ">
                         <li class="breadcrumb-item">
-                            <h4 class="page-title">Ajouter un congé</h4>
+                            <h4 class="page-title">Nouvelle demande de congé</h4>
                         </li>
-                        <li class="breadcrumb-item bcrumb-1">
-                            <a href="../../index.html">
-                                <i class="fas fa-home"></i> Home
-                            </a>
-                        </li>
+                       
                         <li class="breadcrumb-item bcrumb-2">
-                            <a href="#" onClick="return false;">Congés</a>
+                            <a href="#" onClick="return false;">Gestion des Congés</a>
                         </li>
-                        <li class="breadcrumb-item active">Ajouter un congé</li>
+                        <li class="breadcrumb-item active">Nouvelle demande de congé</li>
                     </ul>
                 </div>
             </div>
@@ -30,27 +26,9 @@
                 <div class="card">
                     <div class="header">
                         <h2>
-                            <strong>nouvelle</strong>  demande de congé
+                            <strong>Ajouter un congé</strong>
                         </h2>
-                        <ul class="header-dropdown m-r--5">
-                            <li class="dropdown">
-                                <a href="javascript:void(0);" class="dropdown-toggle" data-bs-toggle="dropdown"
-                                   role="button" aria-haspopup="true" aria-expanded="false">
-                                    <i class="material-icons">more_vert</i>
-                                </a>
-                                <ul class="dropdown-menu float-end">
-                                    <li>
-                                        <a href="javascript:void(0);">Action</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);">Une Autre Action</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);">Quelque chose d'autre ici</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
+                   
                     </div>
                     <div class="body">
                         <form asp-action="Create">
@@ -65,7 +43,7 @@
                                     <div class="form-group">
                                         <select asp-for="TypeCongeID" asp-items="ViewBag.Types" class="col-12 form-control">
 
-                                            <option value="">Select type</option>
+                                            <option value="">Choisir le type</option>
                                         </select>
                                     </div>
                                 </div>

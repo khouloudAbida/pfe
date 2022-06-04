@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace EmployeeApplication
@@ -39,13 +40,14 @@ namespace EmployeeApplication
         .AddSessionStateTempDataProvider();
             services.AddSession();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddTransient<IAuthentificationService, AuthService>();
             services.AddDbContext<Models.AppDbContext>(options =>
           options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
             services.AddIdentity<User, IdentityRole>()
         .AddEntityFrameworkStores<AppDbContext>()
         .AddDefaultTokenProviders();
+            services.AddControllers(options => options.EnableEndpointRouting = false);
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -87,16 +89,34 @@ namespace EmployeeApplication
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseSession();
-
-            app.UseMvc(routes =>
+            app.Use(async (context, next) =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Auth}/{action=Index}");
-                routes.MapRoute(
-                    name: "/Home",
-                    template: "{controller=Home}/{action=Index}");
+                var JWToken = context.Session.GetString("token");
+                var role = context.Session.GetString("Role");
+                if (!string.IsNullOrEmpty(JWToken))
+                {
+                    var identity = new ClaimsIdentity("Employee");
+                    identity.AddClaim(new Claim("Role", role));
+                    context.User = new ClaimsPrincipal(identity);
+                    
+                    context.Request.Headers.Add("Authorization", "Bearer " + JWToken);
+                }
+                await next();
             });
+
+            _ = app.UseMvc(routes =>
+              {
+                  routes.MapRoute(
+                      name: "default",
+                      template: "{controller=Auth}/{action=Index}");
+                  routes.MapRoute(
+                      name: "/Home",
+                      template: "{controller=Home}/{action=Index}");
+
+                  routes.MapRoute(
+                      name: "/Logout",
+                      template: "{controller=Auth}/{action=LogOut}");
+              });
         }
     }
 }

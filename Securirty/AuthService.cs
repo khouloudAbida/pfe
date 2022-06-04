@@ -39,7 +39,7 @@ namespace EmployeeApplication.Securirty
             account = await FindAccountWithIdentifyAndPassword(signInDTO.Identify, signInDTO.Password);
             if (account != null)
                 employee = _Context.Employees.Where(e => e.UserID == account.Id).FirstOrDefault();
-                token = GenerateToken(account, "Client");
+                token = GenerateToken(account, "Employee");
             return new SignInEmployeeResponse()
             {
                 employee = employee,
@@ -142,7 +142,7 @@ namespace EmployeeApplication.Securirty
              string password = "Abd0Nj4h1234!"; //Sender Password  
              string emailToAddress = to; //Receiver Email Address  
              string subject = "Bienvenue dans notre platform";
-             string body = "chere employee bienvenue vous pouvez utiliser cette mots de passe pour acceder au platforme de societe: "+ newpassword;
+             string body = "chere employee bienvenue vous pouvez utiliser cette mots de passe pour acceder au platforme de societe: "+ newpassword +" et cette adress email "+to;
             using (MailMessage mail = new MailMessage())
             {
                 mail.From = new MailAddress(emailFromAddress);
@@ -193,6 +193,7 @@ private async Task<bool> VerifyUniqueEmailAsync(string email)
             {
                 sb = sb.Append(GenerateChar(AllChar));
             }
+            sb.Append("A0@");
             return sb.ToString();
 
         }
@@ -209,6 +210,19 @@ private async Task<bool> VerifyUniqueEmailAsync(string email)
             } while (!availableChars.Any(x => x == c));
 
             return c;
+        }
+
+        public async Task EditPassword(string id, string password)
+        {
+            try { 
+            User user = await _UserManager.FindByIdAsync(id);
+            string token = await _UserManager.GeneratePasswordResetTokenAsync(user);
+          IdentityResult result = await  _UserManager.ResetPasswordAsync(user, token, password);
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
     }
 }

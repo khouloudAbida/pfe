@@ -33,6 +33,8 @@ namespace EmployeeApplication.Migrations
 
                     b.Property<int>("IdType");
 
+                    b.Property<float>("NbHours");
+
                     b.Property<string>("Notes");
 
                     b.Property<int>("TypeCongeID");
@@ -46,6 +48,29 @@ namespace EmployeeApplication.Migrations
                     b.HasIndex("TypeCongeID");
 
                     b.ToTable("Conges");
+                });
+
+            modelBuilder.Entity("EmployeeApplication.Models.Contrat", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("EmployeeID");
+
+                    b.Property<float>("PrimeDeMois");
+
+                    b.Property<float>("SalaireBrut");
+
+                    b.Property<float>("SalaireNet");
+
+                    b.Property<string>("type");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("Contrats");
                 });
 
             modelBuilder.Entity("EmployeeApplication.Models.Employee", b =>
@@ -68,6 +93,8 @@ namespace EmployeeApplication.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(250)");
 
+                    b.Property<string>("Image");
+
                     b.Property<string>("Nom")
                         .IsRequired()
                         .HasColumnType("nvarchar(250)");
@@ -80,7 +107,7 @@ namespace EmployeeApplication.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<int>("SoldeCongé");
+                    b.Property<float>("SoldeCongé");
 
                     b.Property<int>("Telephone");
 
@@ -91,6 +118,52 @@ namespace EmployeeApplication.Migrations
                     b.HasIndex("UserID");
 
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("EmployeeApplication.Models.FichePaie", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Annee");
+
+                    b.Property<int>("EmployeeID");
+
+                    b.Property<int>("Mois");
+
+                    b.Property<float>("Montant");
+
+                    b.Property<DateTime>("dateVirement");
+
+                    b.Property<float>("prime");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("FichePaies");
+                });
+
+            modelBuilder.Entity("EmployeeApplication.Models.JoursFerie", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Annee");
+
+                    b.Property<int>("Day");
+
+                    b.Property<int>("ISAllYear");
+
+                    b.Property<int>("Month");
+
+                    b.Property<int>("NbJours");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("joursFeries");
                 });
 
             modelBuilder.Entity("EmployeeApplication.Models.TypeConge", b =>
@@ -282,11 +355,27 @@ namespace EmployeeApplication.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("EmployeeApplication.Models.Contrat", b =>
+                {
+                    b.HasOne("EmployeeApplication.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("EmployeeApplication.Models.Employee", b =>
                 {
                     b.HasOne("EmployeeApplication.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserID");
+                });
+
+            modelBuilder.Entity("EmployeeApplication.Models.FichePaie", b =>
+                {
+                    b.HasOne("EmployeeApplication.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -21,5 +21,7 @@ namespace EmployeeApplication.Models
         public int TypeCongeID { get; set; }
         public TypeConge TypeConge { get; set; }
         public int status {get;set;}
+
+        public float NbHours { get; set; }
     }
 }

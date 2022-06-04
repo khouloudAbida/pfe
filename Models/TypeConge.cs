@@ -9,7 +9,6 @@ namespace EmployeeApplication.Models
     {
        
         public int ID { get; set; }
-
         public string Type { get; set; }
         public string description { get; set; }
 

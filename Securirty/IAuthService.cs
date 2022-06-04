@@ -12,6 +12,8 @@ namespace EmployeeApplication.Securirty
 
          void SendEmail(string to,string password);
 
-         Task<SignInEmployeeResponse> SignInEmployee(SignInDTO signInDTO);
+        Task EditPassword(string id, string password);
+
+        Task<SignInEmployeeResponse> SignInEmployee(SignInDTO signInDTO);
     }
 }

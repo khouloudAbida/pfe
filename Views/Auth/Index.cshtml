@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1" name="viewport" />
-    <title>lOGIN</title>
+    <title>Connexion</title>
     <!-- Favicon-->
     <link rel="icon" href="../../assets/images/favicon.ico" type="image/x-icon">
     <!-- Plugins Core Css -->
@@ -22,7 +22,8 @@
             <div class="wrap-login100">
                 <form class="login100-form validate-form" asp-action="Login">
                     <span class="login100-form-title p-b-45">
-                        Login
+                        Connexion
+
                     </span>
                     <div class="wrap-input100 validate-input" >
                         <input  asp-for="Identify" class="input100" type="text" >
@@ -32,39 +33,39 @@
                     <div class="wrap-input100 validate-input">
                         <input asp-for="Password" class="input100" type="password" >
                         <span class="focus-input100"></span>
-                        <span class="label-input100">Password</span>
+                        <span class="label-input100">Mot de passe</span>
                     </div>
                     <div class="flex-sb-m w-full p-t-15 p-b-20">
                         <div class="form-check">
                             <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" value=""> Remember me
+                                <input class="form-check-input" type="checkbox" value=""> Rappelez-vous de moi
                                 <span class="form-check-sign">
                                     <span class="check"></span>
                                 </span>
                             </label>
                         </div>
                         <div>
-                            <a href="#" class="txt1">
-                                Forgot Password?
-                            </a>
+                            @*<a href="#" class="txt1">
+                                Mot de passe oublié?
+                            </a>*@
                         </div>
                     </div>
                     <div class="container-login100-form-btn">
-                        <input type="submit" class="login100-form-btn" value="Login" />
+                        <input type="submit" class="login100-form-btn" value="Connexion" />
                             
                     </div>
                     <div class="text-center p-t-45 p-b-20">
                         <span class="txt2">
-                            or sign up using
+                            @*or sign up using*@
                         </span>
                     </div>
                     <div class="login100-form-social flex-c-m">
                         <a href="#" class="login100-form-social-item flex-c-m bg1 m-r-5">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="login100-form-social-item flex-c-m bg2 m-r-5">
+                        @*<a href="#" class="login100-form-social-item flex-c-m bg2 m-r-5">
                             <i class="fab fa-twitter"></i>
-                        </a>
+                        </a>*@
                     </div>
                 </form>
                 <div class="login100-more" style="background-image: url('../../assets/images/pages/bg-01.png');">
